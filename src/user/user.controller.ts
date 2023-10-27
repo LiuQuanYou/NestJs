@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   UseGuards,
+  Req,
   ValidationPipe,
 } from '@nestjs/common';
 import { UserService } from './user.service';
@@ -24,8 +25,17 @@ export class UserController {
   }
 
   @UseGuards(AuthGuard)
-  @Get()
+  @Get('getUserList')
   findAll() {
     return this.userService.findAll();
+  }
+
+  @UseGuards(AuthGuard)
+  @Get('getUserInfo')
+  getUserInfo(@Req() req) {
+    return {
+      code: 200,
+      data: req.user,
+    };
   }
 }

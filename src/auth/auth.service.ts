@@ -23,7 +23,7 @@ export class AuthService {
       throw new HttpException('账号密码错误', 500);
     }
 
-    const payload = { sub: user.id, username: user.userName };
+    const payload = { sub: user.id, user: user};
     // TODO: Generate a JWT and return it here
     // instead of the user object
     return {

@@ -5,6 +5,7 @@ import { UserModule } from './user/user.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { JwtModule } from '@nestjs/jwt';
 import { AuthModule } from './auth/auth.module';
+import { MenuModule } from './menu/menu.module';
 @Module({
   imports: [
     JwtModule.register({
@@ -26,6 +27,7 @@ import { AuthModule } from './auth/auth.module';
     }),
     UserModule,
     AuthModule,
+    MenuModule,
   ],
   controllers: [AppController],
   providers: [AppService],
