@@ -4,7 +4,7 @@ import { AppService } from './app.service';
 import { UserModule } from './user/user.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { JwtModule } from '@nestjs/jwt';
-import { AuthModule } from './routers/auth/auth.module';
+import { AuthModule } from './auth/auth.module';
 @Module({
   imports: [
     JwtModule.register({

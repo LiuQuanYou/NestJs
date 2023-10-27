@@ -1,19 +1,24 @@
-import { Get, HttpException, Inject, Injectable } from '@nestjs/common';
+import {
+  Get,
+  HttpException,
+  Inject,
+  Injectable,
+  UseGuards,
+} from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-import { AuthService } from '../routers/auth/auth.service';
-
+import { AuthGuard } from 'src/auth/auth.guard';
 import { md5 } from 'src/utils';
+import { AuthService } from 'src/auth/auth.service';
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(User)
     private userRepository: Repository<User>,
-    private readonly authService: AuthService,
   ) {}
 
   async create(createUserDto: CreateUserDto) {
@@ -50,39 +55,23 @@ export class UserService {
     }
   }
 
-  /**
-   * 登录
-   * @param createUserDto
-   * @returns
-   */
-  async login(createUserDto: CreateUserDto) {
-    const { userName, password } = createUserDto;
-    const existUser = await this.userRepository.findOne({
-      where: {
-        userName,
-      },
-      select: ['userName', 'password'],
-    });
-    if (!existUser) {
-      throw new HttpException('用户不存在', 500);
-    }
-    if (existUser.password != md5(password)) {
-      throw new HttpException('登录 token 错误，请重新登录', 500);
-    }
-    return {
-      code: 200,
-      data: existUser,
-      token: this.authService.certificate(existUser), // 签发token
-    };
-  }
 
   @Get()
   async findAll() {
     return await this.userRepository.find();
   }
 
-  findOne(id: string) {
-    return `This action returns a #${id} user`;
+  /**
+   * 根据用户名称查询用户信息
+   * @param userName 用户账号
+   * @returns
+   */
+  async findOne(userName: string) {
+    return await this.userRepository.findOne({
+      where: {
+        userName,
+      },
+    });
   }
 
   update(id: number, updateUserDto: UpdateUserDto) {
