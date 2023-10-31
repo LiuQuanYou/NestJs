@@ -12,7 +12,8 @@ import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { md5 } from 'src/utils';
-import { AuthService } from 'src/auth/auth.service';
+import { ApiresultService } from 'libs/filters/apiresult.format';
+
 
 @Injectable()
 export class UserService {
@@ -21,6 +22,8 @@ export class UserService {
     private userRepository: Repository<User>,
   ) {}
 
+  ApiResult = new ApiresultService();
+    
   async create(createUserDto: CreateUserDto) {
     return await this.userRepository.save(createUserDto);
   }
@@ -54,7 +57,6 @@ export class UserService {
       };
     }
   }
-
 
   @Get()
   async findAll() {

@@ -1,11 +1,13 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { UserModule } from './user/user.module';
+import { UserModule } from './api/user/user.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { JwtModule } from '@nestjs/jwt';
 import { AuthModule } from './auth/auth.module';
-import { MenuModule } from './menu/menu.module';
+import { MenuModule } from './api/menu/menu.module';
+import { UploadModule } from './api/upload/upload.module';
+import { ArticleModule } from './api/article/article.module';
 @Module({
   imports: [
     JwtModule.register({
@@ -28,6 +30,8 @@ import { MenuModule } from './menu/menu.module';
     UserModule,
     AuthModule,
     MenuModule,
+    UploadModule,
+    ArticleModule,
   ],
   controllers: [AppController],
   providers: [AppService],
