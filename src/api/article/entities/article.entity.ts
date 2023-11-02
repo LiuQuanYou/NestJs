@@ -1,6 +1,7 @@
-import { Column, Entity } from 'typeorm';
+import { Column, Entity, OneToMany, ManyToOne } from 'typeorm';
 import { Base } from 'libs/Entities/base.entity';
 import { max } from 'class-validator';
+import { ArticleType } from '../../article-type/entities/article-type.entity';
 
 @Entity('article')
 export class Article extends Base {
@@ -27,7 +28,7 @@ export class Article extends Base {
     comment: '摘要',
   })
   abstract: string;
-  
+
   @Column({
     type: 'int',
     nullable: true,
@@ -49,4 +50,14 @@ export class Article extends Base {
     comment: '富文本',
   })
   rich_text: string;
+
+  @Column({
+    type: 'nvarchar',
+    nullable: true,
+    comment: '分类',
+  })
+  article_id: string;
+
+  @ManyToOne(() => ArticleType, (type) => type.articles)
+  type: ArticleType;
 }

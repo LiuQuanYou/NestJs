@@ -1,21 +1,26 @@
 import { Injectable, HttpException } from '@nestjs/common';
-import { CreateArticleDto } from './dto/create-article.dto';
-import { UpdateArticleDto } from './dto/update-article.dto';
-import { Repository, Like } from 'typeorm';
+import { CreateArticleTypeDto } from './dto/create-article-type.dto';
+import { UpdateArticleTypeDto } from './dto/update-article-type.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Article } from './entities/article.entity';
-import { ArticleType } from '../article-type/entities/article-type.entity';
+import { Repository, Like } from 'typeorm';
+import { ArticleType } from './entities/article-type.entity';
 
 @Injectable()
-export class ArticleService {
+export class ArticleTypeService {
   constructor(
-    @InjectRepository(Article)
-    private articleRepository: Repository<Article>,
+    @InjectRepository(ArticleType)
+    private articleRepository: Repository<ArticleType>,
   ) {}
 
-  async create(createArticleDto: CreateArticleDto) {
+  /**
+   * 创建文章分类
+   * @param createArticleTypeDto
+   * @returns
+   */
+  async create(createArticleTypeDto: CreateArticleTypeDto) {
     try {
-      var article = await this.articleRepository.create(createArticleDto);
+      var article = await this.articleRepository.create(createArticleTypeDto);
+      console.log(article);
       await this.articleRepository.save(article);
       return {
         code: 200,
@@ -27,45 +32,37 @@ export class ArticleService {
     }
   }
 
+  async find() {
+    const res = await this.articleRepository.find();
+    return {
+      code: 200,
+      data: res,
+    };
+  }
+
   /**
-   * 根据筛选条件查询列表
-   * @param pageNo  当前页码
-   * @param pageSize  每页数量
-   * @param title 搜索标题
-   * @param status  状态
+   * 分页查询文章分类列表
+   * @param pageNo
+   * @param pageSize
+   * @param title
+   * @param status
    * @returns
    */
-  async findAll(
-    pageNo: number,
-    pageSize: number,
-    title: string,
-    status: number,
-  ) {
+  async findAll(pageNo: number, pageSize: number, title: string) {
     const skipCount = (pageNo - 1) * pageSize;
-
     //拼接筛选条件
     const condition: Record<string, any> = {};
     if (title) {
       condition.title = Like(`%${title}%`);
     }
-    if (status) {
-      condition.title = Like(`%${status}%`);
-    }
-    var { 0: articles, 1: total } = await this.articleRepository
-      .createQueryBuilder('article')
-      .leftJoinAndMapOne(
-        'article.type',
-        ArticleType,
-        'type',
-        'article.article_id=type.id',
-      )
-
-      .skip(skipCount)
-      .take(pageSize)
-      .where(condition)
-      .orderBy('article.order_by', 'ASC')
-      .getManyAndCount();
-
+    const { 0: articles, 1: total } = await this.articleRepository.findAndCount(
+      {
+        select: ['id', 'title', 'order_by', 'createAt'],
+        skip: skipCount,
+        take: pageSize,
+        where: condition,
+      },
+    );
     return {
       code: 200,
       data: {
@@ -76,7 +73,7 @@ export class ArticleService {
   }
 
   /**
-   * 根据文章id查询文章信息
+   * 根据Id查询文章分类详情
    * @param id
    * @returns
    */
@@ -96,14 +93,9 @@ export class ArticleService {
     }
   }
 
-  /**
-   * 修改文章内容
-   * @param updateArticleDto
-   * @returns
-   */
-  async update(updateArticleDto: UpdateArticleDto) {
+  async update(id: number, updateArticleTypeDto: UpdateArticleTypeDto) {
     try {
-      var article = await this.articleRepository.create(updateArticleDto);
+      var article = await this.articleRepository.create(updateArticleTypeDto);
       await this.articleRepository.save(article);
       return {
         code: 200,
@@ -115,8 +107,8 @@ export class ArticleService {
   }
 
   /**
-   * 删除文章
-   * @param id 文章Id
+   * 根据文章Id删除分类
+   * @param id
    * @returns
    */
   async remove(id: string) {
@@ -127,6 +119,7 @@ export class ArticleService {
         },
       });
 
+      console.log(article);
       if (article) {
         await this.articleRepository.remove(article);
         return {

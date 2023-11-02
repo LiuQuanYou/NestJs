@@ -8,6 +8,7 @@ import { AuthModule } from './auth/auth.module';
 import { MenuModule } from './api/menu/menu.module';
 import { UploadModule } from './api/upload/upload.module';
 import { ArticleModule } from './api/article/article.module';
+import { ArticleTypeModule } from './api/article-type/article-type.module';
 @Module({
   imports: [
     JwtModule.register({
@@ -32,6 +33,7 @@ import { ArticleModule } from './api/article/article.module';
     MenuModule,
     UploadModule,
     ArticleModule,
+    ArticleTypeModule,
   ],
   controllers: [AppController],
   providers: [AppService],

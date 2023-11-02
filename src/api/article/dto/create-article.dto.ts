@@ -4,4 +4,5 @@ export class CreateArticleDto {
   status: number;
   order_by?: number;
   rich_text?: string;
+  article_id: string;
 }

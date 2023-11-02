@@ -29,9 +29,11 @@ export class UploadController {
     }),
   )
   image(@UploadedFile() file: Express.Multer.File) {
+    var filePath = file.path.replace(/\\/g, '/');
+    console.log(filePath)
     return {
       code: HttpStatus.OK,
-      file: file.path,
+      file:filePath,
     };
   }
 }
